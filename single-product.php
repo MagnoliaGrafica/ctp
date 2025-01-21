@@ -46,7 +46,7 @@ while ( have_posts() ) :
         do_action( 'woocommerce_before_single_product_summary' );
         ?>
 
-        <div class="summary entry-summary">
+        <div class="summary entry-summary bg-red-500">
             <?php
             /**
              * Hook: woocommerce_single_product_summary.
