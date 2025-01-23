@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Estilos personalizados */
+ul.products {
+    @apply text-lg text-negro mb-4 grid grid-cols-4 gap-8;
+}
+
+ul.products li{
+    @apply border border-gray-200 rounded-lg shadow-md p-3;
+}
+
+ul.products li a h2.woocommerce-loop-product__title{
+    @apply text-lg text-negro text-center font-ubuntu font-semibold py-3;
+}
+
+.description_tab.active,
+[class^="wb_cptb_"].active
+{
+    @apply text-magenta border-magenta;
+}
+
+.description_tab.active a,
+[class^="wb_cptb_"].active a
+{
+    @apply text-magenta border-magenta;
+}
+.woocommerce-Tabs-panel.woocommerce-Tabs-panel--description ,
+.woocommerce-Tabs-panel[class*="woocommerce-Tabs-panel--wb_cptb_"] {
+    @apply p-8;
+}
+
+.woocommerce-Tabs-panel[class*="woocommerce-Tabs-panel--wb_cptb_"] h2.wb_cptb_title {
+    @apply hidden;
+}
+
