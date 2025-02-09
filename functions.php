@@ -47,3 +47,45 @@ add_filter('woocommerce_enqueue_styles', function($enqueue_styles) {
 
 // Eliminar la categoría en la página de un solo producto
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+
+
+// funcion para productos VIP
+function ocultar_productos_para_no_vip($query) {
+    if (!is_admin() && is_shop() && !current_user_can('vip_user')) {
+        $query->set('tax_query', array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field'    => 'slug',
+                'terms'    => array('vip'), // Categoría oculta para usuarios sin "VIP"
+                'operator' => 'NOT IN',
+            ),
+        ));
+    }
+}
+add_action('pre_get_posts', 'ocultar_productos_para_no_vip');
+
+// 1. Crear el rol "VIP User"
+function agregar_rol_vip() {
+    add_role('vip_user', 'Cliente VIP', array(
+        'read' => true,
+        'edit_posts' => false,
+        'delete_posts' => false,
+    ));
+}
+add_action('init', 'agregar_rol_vip');
+
+// 2. Asignar el rol "VIP User" a clientes manualmente
+function asignar_vip_a_usuario($user_id) {
+    $user = new WP_User($user_id);
+    $user->add_role('vip_user');
+}
+
+// 3. Ejemplo: Agregar VIP a un usuario cuando se registre
+/*function hacer_vip_nuevos_clientes($user_id) {
+    $user = new WP_User($user_id);
+    if ($user->roles[0] === 'customer') { // Si el usuario es cliente
+        $user->add_role('vip_user');
+    }
+}
+add_action('user_register', 'hacer_vip_nuevos_clientes');*/
+
