@@ -224,3 +224,40 @@ function filtro_sindicato_clientes_woocommerce($query) {
 add_action('pre_get_users', 'filtro_sindicato_clientes_woocommerce');
 
 
+// Agregar la columna "Sindicato" en la lista de clientes de WooCommerce
+function agregar_columna_sindicato_clientes_wc($columns) {
+    $columns['sindicato'] = __('Sindicato', 'woocommerce');
+    return $columns;
+}
+add_filter('manage_woocommerce_page_wc-admin_customers_columns', 'agregar_columna_sindicato_clientes_wc');
+
+
+// Mostrar el valor del campo "Sindicato" en la tabla de clientes
+function mostrar_columna_sindicato_clientes_wc($column, $customer) {
+    if ($column === 'sindicato') {
+        $user_id = $customer->get_id();
+        $sindicato = get_user_meta($user_id, 'sindicato', true);
+        echo !empty($sindicato) ? esc_html($sindicato) : __('No asignado', 'woocommerce');
+    }
+}
+add_action('manage_woocommerce_page_wc-admin_customers_custom_column', 'mostrar_columna_sindicato_clientes_wc', 10, 2);
+
+
+// Hacer la columna "Sindicato" ordenable en WooCommerce → Clientes
+function hacer_columna_sindicato_ordenable_wc($columns) {
+    $columns['sindicato'] = 'sindicato';
+    return $columns;
+}
+add_filter('manage_woocommerce_page_wc-admin_customers_sortable_columns', 'hacer_columna_sindicato_ordenable_wc');
+
+
+// Agregar un filtro en WooCommerce → Clientes para buscar por sindicato
+function filtro_sindicato_clientes_wc($query_args) {
+    if (!empty($_GET['sindicato'])) {
+        $query_args['meta_key']   = 'sindicato';
+        $query_args['meta_value'] = sanitize_text_field($_GET['sindicato']);
+    }
+    return $query_args;
+}
+add_filter('woocommerce_customer_query_args', 'filtro_sindicato_clientes_wc');
+
