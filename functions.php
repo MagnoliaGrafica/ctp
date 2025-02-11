@@ -89,3 +89,138 @@ function asignar_vip_a_usuario($user_id) {
 }
 add_action('user_register', 'hacer_vip_nuevos_clientes');*/
 
+// Agregar el campo "Sindicato" al formulario de registro
+function agregar_campo_sindicato_registro() {
+    ?>
+    <p class="form-row form-row-wide">
+        <label for="sindicato"><?php _e('Sindicato', 'woocommerce'); ?><span class="required">*</span></label>
+        <input type="text" class="input-text" name="sindicato" id="sindicato" value="<?php if (!empty($_POST['sindicato'])) echo esc_attr($_POST['sindicato']); ?>" />
+    </p>
+    <?php
+}
+add_action('woocommerce_register_form', 'agregar_campo_sindicato_registro');
+
+// Validar el campo en el registro
+function validar_campo_sindicato($errors, $username, $email) {
+    if (empty($_POST['sindicato'])) {
+        $errors->add('error_sindicato', __('El campo sindicato es obligatorio.', 'woocommerce'));
+    }
+    return $errors;
+}
+add_filter('woocommerce_registration_errors', 'validar_campo_sindicato', 10, 3);
+
+// Guardar el campo en los datos del usuario
+function guardar_campo_sindicato($customer_id) {
+    if (isset($_POST['sindicato'])) {
+        update_user_meta($customer_id, 'sindicato', sanitize_text_field($_POST['sindicato']));
+    }
+}
+add_action('woocommerce_created_customer', 'guardar_campo_sindicato');
+
+// **** Agregar campo en la pestaña "General" del producto
+function agregar_campo_sindicatos_permitidos() {
+    global $post;
+    $sindicatos_permitidos = get_post_meta($post->ID, '_sindicatos_permitidos', true);
+    ?>
+    <div class="options_group">
+        <p class="form-field">
+            <label for="sindicatos_permitidos"><?php _e('Sindicatos Permitidos', 'woocommerce'); ?></label>
+            <input type="text" id="sindicatos_permitidos" name="sindicatos_permitidos" value="<?php echo esc_attr($sindicatos_permitidos); ?>" placeholder="Ejemplo: Sindicato A, Sindicato B" />
+            <span class="description"><?php _e('Ingrese los sindicatos que pueden comprar este producto, separados por comas.', 'woocommerce'); ?></span>
+        </p>
+    </div>
+    <?php
+}
+add_action('woocommerce_product_options_general_product_data', 'agregar_campo_sindicatos_permitidos');
+
+// Guardar el valor del campo cuando se guarda el producto
+function guardar_campo_sindicatos_permitidos($post_id) {
+    if (isset($_POST['sindicatos_permitidos'])) {
+        update_post_meta($post_id, '_sindicatos_permitidos', sanitize_text_field($_POST['sindicatos_permitidos']));
+    }
+}
+add_action('woocommerce_process_product_meta', 'guardar_campo_sindicatos_permitidos');
+
+// Bloquear compra si el usuario no pertenece a un sindicato permitido
+function restringir_productos_segun_sindicato($purchasable, $product) {
+    if (is_user_logged_in()) {
+        $user_id = get_current_user_id();
+        $sindicato_usuario = get_user_meta($user_id, 'sindicato', true);
+        $sindicatos_permitidos = get_post_meta($product->get_id(), '_sindicatos_permitidos', true);
+
+        if (!empty($sindicatos_permitidos)) {
+            $sindicatos_permitidos_array = array_map('trim', explode(',', $sindicatos_permitidos));
+            if (!in_array($sindicato_usuario, $sindicatos_permitidos_array)) {
+                return false; // Restringe la compra si el sindicato del usuario no está en la lista
+            }
+        }
+    }
+    return $purchasable;
+}
+add_filter('woocommerce_is_purchasable', 'restringir_productos_segun_sindicato', 10, 2);
+
+// Mostrar mensaje si el producto no está disponible para el sindicato del usuario
+function mensaje_producto_restringido() {
+    global $product;
+
+    if (is_user_logged_in()) {
+        $user_id = get_current_user_id();
+        $sindicato_usuario = get_user_meta($user_id, 'sindicato', true);
+        $sindicatos_permitidos = get_post_meta($product->get_id(), '_sindicatos_permitidos', true);
+
+        if (!empty($sindicatos_permitidos)) {
+            $sindicatos_permitidos_array = array_map('trim', explode(',', $sindicatos_permitidos));
+            if (!in_array($sindicato_usuario, $sindicatos_permitidos_array)) {
+                echo '<p style="color: red; font-weight: bold;">Este producto no está disponible para su sindicato.</p>';
+            }
+        }
+    }
+}
+add_action('woocommerce_single_product_summary', 'mensaje_producto_restringido', 25);
+
+
+// Agregar una nueva columna "Sindicato" en la lista de clientes de WooCommerce
+function agregar_columna_sindicato_woocommerce($columns) {
+    // Eliminar la columna del código postal si existe
+    if (isset($columns['billing_postcode'])) {
+        unset($columns['billing_postcode']);
+    }
+
+    // Agregar la columna "Sindicato"
+    $columns['sindicato'] = __('Sindicato', 'woocommerce');
+    
+    return $columns;
+}
+add_filter('manage_users_columns', 'agregar_columna_sindicato_woocommerce');
+
+// Mostrar el valor del campo "Sindicato" en la columna de clientes
+function mostrar_columna_sindicato_woocommerce($value, $column_name, $user_id) {
+    if ($column_name === 'sindicato') {
+        $sindicato = get_user_meta($user_id, 'sindicato', true);
+        return !empty($sindicato) ? esc_html($sindicato) : __('No asignado', 'woocommerce');
+    }
+    return $value;
+}
+add_filter('manage_users_custom_column', 'mostrar_columna_sindicato_woocommerce', 10, 3);
+
+
+// Hacer la columna "Sindicato" ordenable
+function hacer_columna_sindicato_ordenable($columns) {
+    $columns['sindicato'] = 'sindicato';
+    return $columns;
+}
+add_filter('manage_users_sortable_columns', 'hacer_columna_sindicato_ordenable');
+
+
+// Agregar un filtro en la lista de clientes para buscar por sindicato
+function filtro_sindicato_clientes_woocommerce($query) {
+    global $pagenow;
+
+    if (is_admin() && 'users.php' === $pagenow && isset($_GET['sindicato']) && !empty($_GET['sindicato'])) {
+        $query->set('meta_key', 'sindicato');
+        $query->set('meta_value', sanitize_text_field($_GET['sindicato']));
+    }
+}
+add_action('pre_get_users', 'filtro_sindicato_clientes_woocommerce');
+
+
