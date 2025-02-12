@@ -5,9 +5,8 @@
 
 get_header(); ?>
 
-<div class="container mx-auto py-12 px-4 mt-56 pt-40">
-    <div class="h-56">vacio</div>
-    <h1 class="text-3xl font-bold mb-6">Finalizar Compra</h1>
+<div class="container mx-auto py-12 px-4 pt-52">
+    <h1 class="text-3xl font-bold mb-6 font-ubuntu text-verde">Finalizar Compra</h1>
 
     <?php if (!WC()->cart->is_empty()) : ?>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

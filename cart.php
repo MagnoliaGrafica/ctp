@@ -5,8 +5,7 @@
 
 get_header(); ?>
 
-<div class="container mx-auto py-12 px-4 mt-56 pt-40">
-    <div class="h-56">vacio</div>
+<div class="container mx-auto py-12 px-4 pt-52">
     <h1 class="text-3xl font-bold mb-6">Carrito de Compras</h1>
 
     <?php if (WC()->cart->is_empty()) : ?>

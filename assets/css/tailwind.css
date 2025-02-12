@@ -36,3 +36,38 @@ ul.products li a h2.woocommerce-loop-product__title{
     @apply hidden;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#content {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto;
+}
+
+.wc_formulario{
+    @apply space-y-4
+}
+
+.wc_formulario p label {
+    @apply font-ubuntu text-gray-800 text-sm block mb-2
+}
+
+.wc_formulario p label .required {
+    @apply text-magenta
+}
+
+.wc_formulario p span input {
+    @apply border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-verde text-sm text-gray-700 w-full
+}
+
+table.shop_table.woocommerce-checkout-review-order-table{
+    @apply hidden
+}

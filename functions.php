@@ -261,3 +261,25 @@ function filtro_sindicato_clientes_wc($query_args) {
 }
 add_filter('woocommerce_customer_query_args', 'filtro_sindicato_clientes_wc');
 
+
+// Redirigir a una página personalizada de "Gracias" después de una compra
+function redirigir_a_pagina_gracias_custom($order_id) {
+    if (!$order_id) return;
+
+    $order = wc_get_order($order_id);
+
+    // Define la URL de la página personalizada de "Gracias"
+    $pagina_gracias_url = site_url('/gracias/?order_id=' . $order_id);
+
+    // Asegura que la orden es válida antes de redirigir
+    if ($order) {
+        wp_safe_redirect($pagina_gracias_url);
+        exit;
+    }
+}
+add_action('woocommerce_thankyou', 'redirigir_a_pagina_gracias_custom', 10, 1);
+
+
+/* eliminar el campo de notas del pedido en la página de pago */
+add_filter('woocommerce_enable_order_notes_field', '__return_false');
+

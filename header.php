@@ -6,6 +6,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
+<div id="content">
 <header>
     <!-- Navbar -->
     <nav id="navbar" class="fixed w-full bg-white/50 backdrop-blur-md shadow-md transition-transform duration-300 transform-gpu z-50">
@@ -49,6 +50,25 @@
                     <?php endif; ?>
                 </a>
 
+                <!-- User Authentication Menu -->
+<?php if (is_user_logged_in()) : ?>
+    <a href="<?php echo wp_logout_url(home_url()); ?>" class="text-gray-700 hover:text-red-600 transition-colors flex items-center">
+        <!-- Logout Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3H5.25A2.25 2.25 0 0 0 3 5.25v13.5A2.25 2.25 0 0 0 5.25 21H13.5a2.25 2.25 0 0 0 2.25-2.25V15m4.5-3H9m6-3 3 3m0 0-3 3" />
+        </svg>
+        <span class="ml-2">Cerrar sesión</span>
+    </a>
+<?php else : ?>
+    <a href="<?php echo wc_get_page_permalink('myaccount'); ?>" class="text-gray-700 hover:text-blue-600 transition-colors flex items-center">
+        <!-- Login Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3H5.25A2.25 2.25 0 0 0 3 5.25v13.5A2.25 2.25 0 0 0 5.25 21H13.5a2.25 2.25 0 0 0 2.25-2.25V15m4.5-3H9m6-3 3 3m0 0-3 3" />
+        </svg>
+        <span class="ml-2">Iniciar sesión</span>
+    </a>
+<?php endif; ?>
+
                 <!-- Mobile Menu Button -->
                 <button id="menu-btn" class="md:hidden flex items-center text-gray-700">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
@@ -57,6 +77,8 @@
                 </button>
             </div>
         </div>
+        
+
 
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden bg-white md:hidden shadow-md">

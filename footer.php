@@ -1,3 +1,4 @@
+</div> <!-- Cierra #content -->
 <footer class="bg-negro p-4 text-white border-t-8 border-verde">
     <div class="container mx-auto" >
 
