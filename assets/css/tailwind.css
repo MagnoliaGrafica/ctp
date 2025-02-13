@@ -57,7 +57,7 @@ footer {
 }
 
 .wc_formulario p label {
-    @apply font-ubuntu text-gray-800 text-sm block mb-2
+    @apply font-ubuntu text-gray-900 text-sm block mb-2
 }
 
 .wc_formulario p label .required {
