@@ -32,9 +32,9 @@ get_header(); ?>
         }
         ?>
         <section id="breadcrumbs" class="pt-36 mt-32 ">
-        <div class="bg-gray-100 p-4 ">
-        <nav class="max-w-7xl mx-auto">
-            <ol class="flex space-x-4 text-sm text-gray-700">
+            <div class="bg-gray-100 p-4 ">
+                <nav class="max-w-7xl mx-auto">
+                <ol class="flex space-x-4 text-sm text-gray-700">
                 <li>
                     <a href="<?php echo home_url(); ?>" class="hover:text-blue-600">Inicio</a>
                 </li>
@@ -58,9 +58,9 @@ get_header(); ?>
                     </li>
                 <?php endif; ?>
             </ol>
-        </nav>
-    </div>
-</section>
+            </nav>
+            </div>
+        </section>
 
 
         <section class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">

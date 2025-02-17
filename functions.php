@@ -17,6 +17,8 @@ function mi_theme_enqueue_assets() {
 
     // Cargar script principal (opcional)
     wp_enqueue_script('main-js', get_template_directory_uri() . '/assets/js/main.js', [], '1.0', true);
+    wp_enqueue_script('swiper-js', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js', array(), null, true);
+    wp_enqueue_style('swiper-css', 'https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css');
 }
 add_action('wp_enqueue_scripts', 'mi_theme_enqueue_assets');
 
@@ -177,6 +179,30 @@ function mensaje_producto_restringido() {
     }
 }
 add_action('woocommerce_single_product_summary', 'mensaje_producto_restringido', 25);
+
+
+// bloquear compra si no esta logueado en pantalla tienda
+
+function disable_add_to_cart_button_for_guests() {
+    if (!is_user_logged_in()) {
+        ?>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                let buttons = document.querySelectorAll('.add_to_cart_button, .single_add_to_cart_button');
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    button.style.opacity = "0.5";
+                    button.style.cursor = "not-allowed";
+                    button.title = "Debes iniciar sesión para comprar";
+                });
+            });
+        </script>
+        <?php
+    }
+}
+add_action('wp_footer', 'disable_add_to_cart_button_for_guests');
+
+
 
 
 // Agregar una nueva columna "Sindicato" en la lista de clientes de WooCommerce

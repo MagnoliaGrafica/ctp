@@ -71,3 +71,8 @@ footer {
 table.shop_table.woocommerce-checkout-review-order-table{
     @apply hidden
 }
+
+
+.title_ficha .woocommerce-loop-product__title{
+    @apply text-gray-900 text-xl text-center py-2
+}
